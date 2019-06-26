@@ -22,7 +22,7 @@ try {
 	$postUserId = filter_input(INPUT_GET, "postUserId", FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
 
 	// verify the session, start if not active
-	if(session_status() !==PHP_SESSION_ACTIVE) {
+	if(session_status() !== PHP_SESSION_ACTIVE) {
 		session_start();
 	}
 	if($method === "GET") {
@@ -37,31 +37,26 @@ try {
 					break;
 				}
 			}
-		} if(empty($postUserId) === false) {
+		}
+		if(empty($postUserId) === false) {
 
-			foreach($users as $user) {
-				if($user->userId === $postUserId) {
 
-					$postJson = @file_get_contents("posts.json");
+			$postJson = @file_get_contents("posts.json");
 
-					if($postJson === false) {
-						throw(new RuntimeException("Unable to read diceware data", 500));
-					}
+			if($postJson === false) {
+				throw(new RuntimeException("Unable to read diceware data", 500));
+			}
 
-					$posts = json_decode($postJson);
-					$postArray = [];
+			$posts = json_decode($postJson);
+			$postArray = [];
 
-					foreach($posts as $post) {
-						if($post->postUserId === $postUserId) {
-							$postArray[] = $post;
-						}
-					}
-					$reply->data = (object) [
-						"user" => $user,
-						"posts" => $postArray
-					];
+			foreach($posts as $post) {
+				if($post->postUserId === $postUserId) {
+					$postArray[] = $post;
 				}
 			}
+
+			$reply->data = $postArray;
 		} else {
 			$reply->data = $users;
 		}
@@ -91,7 +86,7 @@ try {
 		}
 		//name username email phone, website
 
-		$requestObject-> userId = generateUuidV4();
+		$requestObject->userId = generateUuidV4();
 
 		$users[] = $requestObject;
 
@@ -101,7 +96,8 @@ try {
 	} else {
 		throw (new InvalidArgumentException("Invalid HTTP method request", 418));
 	}
-} catch(\Exception | \TypeError $exception) {
+} catch
+(\Exception | \TypeError $exception) {
 	$reply->status = $exception->getCode();
 	$reply->message = $exception->getMessage();
 }
